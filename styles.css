@@ -1,0 +1,411 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   1. Design System Tokens
+   ========================================================================== */
+:root {
+    --ink: #13233D;
+    --navy: #234876;
+    --navy2: #35608F;
+    --sky: #0284C7;
+    --green: #059669;
+    --rose: #C81E63;
+    --rose2: #E25A8B;
+    --rose-tint: #FCE7F0;
+    --amber: #CF8A22;
+    --amber-tint: #F8EAD0;
+    --bg: #EAEEF5;
+    --card: #FFFFFF;
+    --line: #D9E0EC;
+    --muted: #5C6B82;
+    --ink-soft: #3C4D67;
+    
+    --disp: 'IBM Plex Sans Thai', 'Noto Sans Thai', sans-serif;
+    --body: 'Sarabun', 'IBM Plex Sans Thai', sans-serif;
+    
+    --shadow: 0 1px 2px rgba(19, 35, 61, 0.06), 0 6px 20px rgba(19, 35, 61, 0.06);
+    --shadow-sm: 0 1px 2px rgba(19, 35, 61, 0.05), 0 2px 8px rgba(19, 35, 61, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--ink-soft);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    font-size: 15px;
+}
+
+h1, h2, h3, h4, .font-disp {
+    font-family: var(--disp);
+}
+
+/* ==========================================================================
+   2. Scrollbar Customization
+   ========================================================================== */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #eef2f8;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #b0c0d4;
+    border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--navy2);
+}
+
+/* ==========================================================================
+   3. Header & Brand Banner
+   ========================================================================== */
+header.top-banner {
+    background: linear-gradient(135deg, #13233D 0%, #1C3759 52%, #234876 100%);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+}
+
+header.top-banner::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(200, 30, 99, 0.32), transparent 62%);
+    pointer-events: none;
+}
+
+.brand-logo-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    background: #ffffff;
+    color: var(--rose);
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 20px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    flex: none;
+}
+
+.date-badge {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: #E8EFF8;
+    backdrop-filter: blur(4px);
+}
+
+.dot-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--rose2);
+    box-shadow: 0 0 0 4px rgba(226, 90, 139, 0.25);
+}
+
+/* Navigation Tabs Sub-bar */
+.nav-tabs-bar {
+    background: rgba(19, 35, 61, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+}
+
+.nav-tab {
+    font-family: var(--disp);
+    padding: 12px 18px;
+    font-weight: 500;
+    font-size: 13.5px;
+    color: #C4D4E8;
+    transition: all 0.16s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-tab:hover {
+    color: #ffffff;
+    border-bottom-color: var(--rose2);
+}
+
+.nav-tab.active {
+    color: #ffffff;
+    font-weight: 600;
+    border-bottom-color: var(--rose);
+}
+
+/* ==========================================================================
+   4. Executive KPI Cards
+   ========================================================================== */
+.kpi-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(19, 35, 61, 0.1);
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--rose);
+}
+
+.kpi-card.kpi-navy::before { background: var(--navy2); }
+.kpi-card.kpi-amber::before { background: var(--amber); }
+.kpi-card.kpi-ink::before { background: var(--ink); }
+.kpi-card.kpi-sky::before { background: var(--sky); }
+.kpi-card.kpi-green::before { background: var(--green); }
+
+/* ==========================================================================
+   5. Section Header
+   ========================================================================== */
+.shead {
+    display: flex;
+    align-items: flex-end;
+    gap: 13px;
+    margin-bottom: 17px;
+}
+
+.snum {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--rose);
+    background: var(--rose-tint);
+    width: 32px;
+    height: 32px;
+    border-radius: 99px;
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.panel-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================================
+   6. Faculty Deep-Dive Components
+   ========================================================================== */
+.faculty-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #ffffff;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    transition: all 0.16s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(19, 35, 61, 0.04);
+}
+
+.faculty-pill-btn:hover {
+    border-color: var(--navy2);
+    color: var(--ink);
+    background-color: #F7F9FC;
+}
+
+.faculty-pill-btn .pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    background-color: #EEF2F8;
+    color: var(--navy);
+}
+
+.faculty-pill-btn.active {
+    background-color: var(--ink);
+    color: #ffffff;
+    border-color: var(--ink);
+    box-shadow: 0 3px 10px rgba(19, 35, 61, 0.18);
+}
+
+.faculty-pill-btn.active .pill-count {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+.major-stat-box {
+    background-color: #F8FAFC;
+    border: 1px solid #E6ECF5;
+    border-radius: 12px;
+    padding: 10px 12px;
+    text-align: center;
+}
+
+.major-chart-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid #EEF2F8;
+    border-radius: 12px;
+    background-color: #FCFDFE;
+    padding: 10px 8px 6px 8px;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.14s ease;
+}
+
+.clickable-row:hover {
+    background-color: #EFF6FF !important;
+}
+
+.clickable-row.selected-major-row {
+    background-color: #E0F2FE !important;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   7. Table Styling
+   ========================================================================== */
+.tablebox {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    -webkit-overflow-scrolling: touch;
+}
+
+.tablebox table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.tablebox thead th {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 12.5px;
+    color: #ffffff;
+    background: var(--ink);
+    padding: 13px 14px;
+    white-space: nowrap;
+    vertical-align: middle;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tablebox tbody tr:nth-child(even) {
+    background-color: #FAFBFD;
+}
+
+.tablebox tbody td {
+    padding: 11px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid #EEF1F6;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.tablebox tbody td.col-wrap {
+    white-space: normal !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    line-height: 1.45;
+}
+
+.tablebox tbody tr:hover {
+    background-color: #F1F5FB;
+}
+
+.tablebox tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================================================
+   8. Print Media Queries
+   ========================================================================== */
+@media print {
+    header, 
+    #data-empty-notice, 
+    #lecturer-search-input, 
+    .nav-tabs-bar, 
+    #btn-open-edit-org, 
+    #btn-clear-search, 
+    button, 
+    .no-print, 
+    .fa-magnifying-glass, 
+    .fa-id-card {
+        display: none !important;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 1.2cm;
+    }
+
+    body {
+        background-color: #ffffff !important;
+        color: var(--ink) !important;
+        font-size: 11pt;
+    }
+
+    main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .overflow-x-auto {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 0.5rem !important;
+    }
+
+    thead tr {
+        background-color: #EEF1F6 !important;
+        color: var(--ink) !important;
+    }
+
+    th, td {
+        border: 1px solid var(--line) !important;
+        padding: 8px 10px !important;
+        font-size: 9.5pt !important;
+    }
+}
