@@ -709,9 +709,20 @@ function parseTermAndYear(semVal, yearVal, sheetName = '') {
 
 function cleanDegree(val) {
     const str = cleanString(val);
-    if (str.includes('เอก') || str.includes('ดร.') || str.includes('Ph.D') || str.includes('Doctor')) return 'ปริญญาเอก';
-    if (str.includes('โท') || str.includes('มหาบัณฑิต') || str.includes('Master')) return 'ปริญญาโท';
-    if (str.includes('ตรี') || str.includes('บัณฑิต') || str.includes('Bachelor')) return 'ปริญญาตรี';
+    if (!str) return 'ไม่ระบุคุณวุฒิ';
+
+    const compact = str.replace(/\s+/g, '');
+    const explicitUnknownValues = [
+        '-', '–', '—', 'null', 'undefined', 'n/a', 'na', 'none',
+        'ไม่ระบุ', 'ไม่ระบุคุณวุฒิ', 'ไม่ทราบ', 'ไม่ทราบคุณวุฒิ', 'ไม่มีข้อมูล', 'ว่าง'
+    ];
+    if (explicitUnknownValues.includes(compact.toLowerCase()) || explicitUnknownValues.includes(str.toLowerCase())) {
+        return 'ไม่ระบุคุณวุฒิ';
+    }
+
+    if (str.includes('เอก') || str.includes('ดร.') || /ph\.?d/i.test(str) || /doctor/i.test(str)) return 'ปริญญาเอก';
+    if (str.includes('โท') || str.includes('มหาบัณฑิต') || /master/i.test(str)) return 'ปริญญาโท';
+    if (str.includes('ตรี') || str.includes('บัณฑิต') || /bachelor/i.test(str)) return 'ปริญญาตรี';
     return 'ไม่ระบุคุณวุฒิ';
 }
 
@@ -1311,7 +1322,7 @@ function getFilteredMasterData({ includeFaculty = true, includeMajor = true } = 
     return STATE.rawLecturerData.filter(item => {
         const matchYear = (STATE.currentYearFilter === 'ALL') || (item.year === STATE.currentYearFilter);
         const matchSemester = (STATE.currentSemesterFilter === 'ALL') || (item.semester === STATE.currentSemesterFilter);
-        const matchDegree = (STATE.currentDegreeFilter === 'ALL') || (item.degree === STATE.currentDegreeFilter);
+        const matchDegree = (STATE.currentDegreeFilter === 'ALL') || (cleanDegree(item.degree) === STATE.currentDegreeFilter);
         const matchFaculty = !includeFaculty || (STATE.activeFaculty === 'ALL') || (item.faculty === STATE.activeFaculty);
         const matchMajor = !includeMajor || (STATE.selectedMajorFilter === 'ALL') || (item.major === STATE.selectedMajorFilter);
         return matchYear && matchSemester && matchDegree && matchFaculty && matchMajor;
@@ -1381,7 +1392,7 @@ function renderOverviewCharts() {
 
     const trendBaseData = STATE.rawLecturerData.filter(item => {
         const matchSemester = (STATE.currentSemesterFilter === 'ALL') || (item.semester === STATE.currentSemesterFilter);
-        const matchDegree = (STATE.currentDegreeFilter === 'ALL') || (item.degree === STATE.currentDegreeFilter);
+        const matchDegree = (STATE.currentDegreeFilter === 'ALL') || (cleanDegree(item.degree) === STATE.currentDegreeFilter);
         return matchSemester && matchDegree;
     });
 
@@ -1421,7 +1432,9 @@ function renderOverviewCharts() {
     const docCount = getDistinctLecturers(STATE.filteredLecturerData.filter(d => d.degree === 'ปริญญาเอก')).length;
     const masterCount = getDistinctLecturers(STATE.filteredLecturerData.filter(d => d.degree === 'ปริญญาโท')).length;
     const bachCount = getDistinctLecturers(STATE.filteredLecturerData.filter(d => d.degree === 'ปริญญาตรี')).length;
-    const otherCount = Math.max(0, totalLecturers - (docCount + masterCount + bachCount));
+    const otherCount = getDistinctLecturers(
+        STATE.filteredLecturerData.filter(d => cleanDegree(d.degree) === 'ไม่ระบุคุณวุฒิ')
+    ).length;
 
     const getPct = (val) => totalLecturers > 0 ? ((val / totalLecturers) * 100).toFixed(1) : '0';
 
@@ -1591,9 +1604,10 @@ function renderFacultyDegreeSummaryTable() {
         const entry = facultyPivot[d.faculty];
         entry.totalSet.add(d.lecturerName);
 
-        if (d.degree === 'ปริญญาเอก') entry.doc.add(d.lecturerName);
-        else if (d.degree === 'ปริญญาโท') entry.master.add(d.lecturerName);
-        else if (d.degree === 'ปริญญาตรี') entry.bach.add(d.lecturerName);
+        const normalizedDeg = cleanDegree(d.degree);
+        if (normalizedDeg === 'ปริญญาเอก') entry.doc.add(d.lecturerName);
+        else if (normalizedDeg === 'ปริญญาโท') entry.master.add(d.lecturerName);
+        else if (normalizedDeg === 'ปริญญาตรี') entry.bach.add(d.lecturerName);
         else entry.other.add(d.lecturerName);
     });
 
@@ -2662,8 +2676,8 @@ function exportFilteredExcel(degree) {
     let degreeTitle = 'รวมอาจารย์พิเศษทุกระดับคุณวุฒิ';
 
     if (degree !== 'ALL') {
-        subset = subset.filter(d => d.degree === degree);
-        degreeTitle = `ระดับ${degree}`;
+        subset = subset.filter(d => cleanDegree(d.degree) === degree);
+        degreeTitle = degree === 'ไม่ระบุคุณวุฒิ' ? 'กลุ่มไม่ระบุคุณวุฒิ' : `ระดับ${degree}`;
     }
 
     if (subset.length === 0) {
@@ -2746,9 +2760,10 @@ function exportFacultyDegreeExcel() {
         const entry = facultyPivot[d.faculty];
         entry.totalSet.add(d.lecturerName);
 
-        if (d.degree === 'ปริญญาเอก') entry.doc.add(d.lecturerName);
-        else if (d.degree === 'ปริญญาโท') entry.master.add(d.lecturerName);
-        else if (d.degree === 'ปริญญาตรี') entry.bach.add(d.lecturerName);
+        const normalizedDeg = cleanDegree(d.degree);
+        if (normalizedDeg === 'ปริญญาเอก') entry.doc.add(d.lecturerName);
+        else if (normalizedDeg === 'ปริญญาโท') entry.master.add(d.lecturerName);
+        else if (normalizedDeg === 'ปริญญาตรี') entry.bach.add(d.lecturerName);
         else entry.other.add(d.lecturerName);
     });
 
